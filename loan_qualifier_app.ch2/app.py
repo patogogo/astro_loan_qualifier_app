@@ -6,12 +6,15 @@ This is a command line application to match applicants with qualifying loans.
 Example:
     $ python app.py
 """
+
 import sys
+import csv
 import fire
 import questionary
 from pathlib import Path
 
-from qualifier.utils.fileio import load_csv
+
+from qualifier.utils.fileio import load_csv, save_csv
 
 from qualifier.utils.calculators import (
     calculate_monthly_debt_ratio,
@@ -62,6 +65,7 @@ def get_applicant_info():
 
 
 def find_qualifying_loans(bank_data, credit_score, debt, income, loan, home_value):
+    
     """Determine which loans the user qualifies for.
 
     Loan qualification criteria is based on:
@@ -84,8 +88,10 @@ def find_qualifying_loans(bank_data, credit_score, debt, income, loan, home_valu
     """
 
     # Calculate the monthly debt ratio
+
     monthly_debt_ratio = calculate_monthly_debt_ratio(debt, income)
     print(f"The monthly debt to income ratio is {monthly_debt_ratio:.02f}")
+    
 
     # Calculate loan to value ratio
     loan_to_value_ratio = calculate_loan_to_value_ratio(loan, home_value)
@@ -110,7 +116,17 @@ def save_qualifying_loans(qualifying_loans):
     """
     # @TODO: Complete the usability dialog for savings the CSV Files.
     # YOUR CODE HERE!
+    if not qualifying_loans:
+        sys.exit('No qualifying loans found.')
+    choice = questionary.confirm('Do you want to save loans in the file?').ask()
+    if choice:
+        csvpath = questionary.text("Enter path where you would like to save data:").ask()
+        save_csv(Path(csvpath, qualifying_loans))
 
+
+
+#results = find_qualifying_loans('bank_data', 'credit_score', 'debt', 'income', 'loan', 'home_value')
+#save_csv(results)
 
 def run():
     """The main function for running the script."""
@@ -132,3 +148,5 @@ def run():
 
 if __name__ == "__main__":
     fire.Fire(run)
+
+
