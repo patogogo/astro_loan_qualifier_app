@@ -120,9 +120,7 @@ def save_qualifying_loans(qualifying_loans):
         sys.exit('No qualifying loans found.')
     choice = questionary.confirm('Do you want to save loans in the file?').ask()
     if choice:
-        csvpath = questionary.text("Enter path where you would like to save data:").ask()
-        save_csv(Path(csvpath, qualifying_loans))
-
+        return save_csv(qualifying_loans)
 
 
 #results = find_qualifying_loans('bank_data', 'credit_score', 'debt', 'income', 'loan', 'home_value')
